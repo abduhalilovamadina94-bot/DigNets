@@ -1,0 +1,15 @@
+{
+  "name": "dignets",
+  "version": "1.0.0",
+  "description": "DigNets Real-Time AI Messenger",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js"
+  },
+  "engines": { "node": ">=18.0.0" },
+  "dependencies": {
+    "ws": "^8.16.0",
+    "uuid": "^9.0.0",
+    "jsonwebtoken": "^9.0.2"
+  }
+}

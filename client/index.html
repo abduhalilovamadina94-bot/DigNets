@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>DigNets</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#09090f;--bg2:#111118;--bg3:#18181f;--bg4:#202028;--ac:#7c6fcd;--ac2:#a855f7;--ac3:#06b6d4;--green:#10b981;--red:#ef4444;--text:#eeeef8;--t2:#9090b0;--t3:#505068;--bd:rgba(255,255,255,.06);--bd2:rgba(255,255,255,.11);}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);}
+::-webkit-scrollbar{width:3px;}::-webkit-scrollbar-thumb{background:#28283a;border-radius:3px;}
+button{cursor:pointer;font-family:'DM Sans',sans-serif;border:none;}
+
+/* ── AUTH ── */
+#auth{position:fixed;inset:0;background:var(--bg);z-index:99;display:flex;align-items:center;justify-content:center;padding:16px;}
+.ac{width:100%;max-width:360px;background:var(--bg2);border:1px solid var(--bd2);border-radius:22px;padding:28px 22px;display:flex;flex-direction:column;gap:14px;}
+.alo{text-align:center;}
+.ali{width:56px;height:56px;background:linear-gradient(135deg,var(--ac),var(--ac2));border-radius:16px;display:inline-flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:#fff;margin-bottom:8px;}
+.at{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;background:linear-gradient(135deg,#a78bfa,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.as2{font-size:13px;color:var(--t2);margin-top:2px;}
+.atabs{display:flex;background:var(--bg3);border-radius:9px;padding:3px;gap:3px;}
+.atab{flex:1;padding:7px;background:none;color:var(--t2);font-size:13px;font-weight:500;border-radius:7px;transition:all .2s;}
+.atab.on{background:var(--bg4);color:var(--text);}
+.af{display:flex;flex-direction:column;gap:8px;}
+.af input{background:var(--bg3);border:1px solid var(--bd2);border-radius:10px;padding:11px 13px;color:var(--text);font-size:14px;outline:none;font-family:'DM Sans',sans-serif;width:100%;transition:border-color .2s;}
+.af input:focus{border-color:var(--ac);}
+.af input::placeholder{color:var(--t3);}
+.abtn{background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;font-size:14px;font-weight:600;padding:12px;border-radius:11px;width:100%;transition:opacity .2s;}
+.abtn:hover{opacity:.85;}
+.aerr{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);border-radius:8px;padding:9px 12px;font-size:12px;color:#fca5a5;display:none;}
+.dmo{display:flex;flex-direction:column;gap:5px;}
+.dlab{font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px;}
+.dmb{background:var(--bg3);border:1px solid var(--bd);border-radius:9px;padding:9px 12px;color:var(--t2);font-size:12px;text-align:left;display:flex;align-items:center;gap:9px;transition:all .2s;}
+.dmb:hover{background:var(--bg4);color:var(--text);border-color:var(--ac);}
+.srv-note{font-size:11px;color:var(--t3);text-align:center;padding:4px 0;}
+.srv-note a{color:var(--ac);text-decoration:none;}
+
+/* ── APP ── */
+#app{display:none;height:100vh;width:100%;}
+.layout{display:flex;height:100vh;}
+
+/* ── SIDEBAR ── */
+.sb{width:260px;min-width:260px;background:var(--bg2);border-right:1px solid var(--bd);display:flex;flex-direction:column;height:100vh;transition:transform .28s;}
+.sbh{padding:14px 12px 10px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:9px;}
+.sbli{width:32px;height:32px;background:linear-gradient(135deg,var(--ac),var(--ac2));border-radius:9px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:13px;font-weight:800;color:#fff;flex-shrink:0;}
+.sblt{font-family:'Syne',sans-serif;font-size:17px;font-weight:800;background:linear-gradient(135deg,#a78bfa,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.sbnew{margin-left:auto;width:30px;height:30px;background:rgba(124,111,205,.15);border-radius:8px;color:var(--ac);font-size:18px;display:flex;align-items:center;justify-content:center;}
+.sbsr{padding:9px 10px 7px;display:flex;align-items:center;gap:7px;background:var(--bg3);border:1px solid var(--bd);border-radius:10px;margin:8px 10px 6px;}
+.sbsr input{background:none;border:none;outline:none;color:var(--text);font-size:13px;flex:1;font-family:'DM Sans',sans-serif;}
+.sbsr input::placeholder{color:var(--t3);}
+.sbtabs{display:flex;padding:0 8px 7px;gap:4px;}
+.sbtab{flex:1;padding:6px 4px;background:none;border:1px solid transparent;border-radius:7px;color:var(--t3);font-size:11px;font-weight:500;transition:all .2s;}
+.sbtab.on{background:rgba(124,111,205,.12);border-color:rgba(124,111,205,.2);color:var(--ac);}
+.ul{flex:1;overflow-y:auto;padding:0 6px 6px;}
+.slb{font-size:10px;font-weight:500;color:var(--t3);padding:6px 7px 2px;letter-spacing:.07em;text-transform:uppercase;}
+.ci{display:flex;align-items:center;gap:8px;padding:9px 8px;border-radius:11px;cursor:pointer;transition:background .15s;}
+.ci:hover{background:var(--bg3);}
+.ci.on{background:rgba(124,111,205,.1);}
+.avw{position:relative;flex-shrink:0;}
+.av{border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:700;flex-shrink:0;}
+.odot{position:absolute;bottom:-1px;right:-1px;width:11px;height:11px;background:var(--green);border-radius:50%;border:2px solid var(--bg2);}
+.cin{flex:1;min-width:0;}
+.cinm{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.cipv{font-size:11px;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px;}
+.cim{text-align:right;flex-shrink:0;}
+.cit{font-size:10px;color:var(--t3);}
+.ubdg{background:var(--ac);color:#fff;font-size:9px;min-width:16px;height:16px;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-top:3px;margin-left:auto;padding:0 3px;}
+.sbb{border-top:1px solid var(--bd);padding:10px 11px;display:flex;align-items:center;gap:9px;}
+.myav{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;}
+.myn{font-size:13px;font-weight:500;}
+.mys{font-size:11px;color:var(--green);}
+.lbtn{margin-left:auto;background:none;color:var(--t3);font-size:16px;padding:4px;}
+
+/* ── MAIN ── */
+.mn{flex:1;display:flex;flex-direction:column;min-width:0;}
+.emp{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--t3);}
+.empbig{font-family:'Syne',sans-serif;font-size:52px;font-weight:800;background:linear-gradient(135deg,rgba(124,111,205,.22),rgba(6,182,212,.18));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+#cv{display:none;flex-direction:column;height:100%;}
+.ch{padding:0 14px;height:56px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:10px;background:var(--bg2);flex-shrink:0;}
+.chn{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;}
+.chs{font-size:11px;margin-top:1px;}
+.mmt{display:none;width:32px;height:32px;background:var(--bg3);border:1px solid var(--bd);border-radius:9px;align-items:center;justify-content:center;color:var(--t2);font-size:18px;}
+.has{margin-left:auto;display:flex;gap:5px;}
+.hb{width:32px;height:32px;background:var(--bg3);border:1px solid var(--bd);border-radius:9px;color:var(--t2);font-size:15px;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.hb:hover{background:var(--bg4);color:var(--text);}
+.msgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:4px;background:var(--bg);}
+.ddiv{text-align:center;font-size:10px;color:var(--t3);padding:5px 0;display:flex;align-items:center;gap:8px;}
+.ddiv::before,.ddiv::after{content:'';flex:1;height:1px;background:var(--bd);}
+.mr{display:flex;align-items:flex-end;gap:6px;max-width:78%;}
+.mr.me{flex-direction:row-reverse;margin-left:auto;}
+.mav{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0;font-family:'Syne',sans-serif;}
+.mw{display:flex;flex-direction:column;gap:2px;}
+.mr.me .mw{align-items:flex-end;}
+.mb{padding:9px 13px;border-radius:15px;font-size:14px;line-height:1.55;word-break:break-word;}
+.mr.theirs .mb{background:var(--bg3);color:var(--text);border-bottom-left-radius:3px;border:1px solid var(--bd);}
+.mr.me .mb{background:linear-gradient(135deg,var(--ac),#5f4fb5);color:#fff;border-bottom-right-radius:3px;}
+.mm{font-size:10px;color:var(--t3);display:flex;align-items:center;gap:3px;}
+.mr.me .mm{justify-content:flex-end;}
+.tks{color:var(--ac3);}
+.rcts{display:flex;gap:3px;flex-wrap:wrap;margin-top:2px;}
+.rct{background:var(--bg4);border:1px solid var(--bd);border-radius:20px;padding:2px 7px;font-size:12px;cursor:pointer;}
+.rct:hover{background:rgba(124,111,205,.2);}
+.typing-r{display:flex;align-items:flex-end;gap:6px;}
+.tbub{background:var(--bg3);border:1px solid var(--bd);border-radius:15px;border-bottom-left-radius:3px;padding:10px 13px;display:flex;gap:4px;align-items:center;}
+.td{width:6px;height:6px;border-radius:50%;background:var(--t3);animation:tda 1.4s infinite;}
+.td:nth-child(2){animation-delay:.2s;}.td:nth-child(3){animation-delay:.4s;}
+@keyframes tda{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-5px);opacity:1}}
+.tlb{font-size:11px;color:var(--t3);padding-left:4px;}
+/* connection banner */
+.conn-banner{background:rgba(239,68,68,.12);border-bottom:1px solid rgba(239,68,68,.2);padding:7px 14px;font-size:12px;color:#fca5a5;text-align:center;display:none;}
+.conn-ok{background:rgba(16,185,129,.1);color:#6ee7b7;border-bottom-color:rgba(16,185,129,.2);}
+/* INPUT */
+.ibar{padding:10px 12px;border-top:1px solid var(--bd);background:var(--bg2);display:flex;align-items:flex-end;gap:7px;flex-shrink:0;}
+.iw{flex:1;background:var(--bg3);border:1px solid var(--bd2);border-radius:13px;display:flex;align-items:flex-end;gap:4px;padding:9px 10px;transition:border-color .2s;}
+.iw:focus-within{border-color:var(--ac);}
+#mi{flex:1;background:none;border:none;outline:none;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;resize:none;max-height:100px;min-height:20px;line-height:1.5;}
+#mi::placeholder{color:var(--t3);}
+.iac{display:flex;gap:2px;flex-shrink:0;}
+.ib{width:28px;height:28px;border-radius:7px;background:none;color:var(--t3);font-size:15px;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.ib:hover{color:var(--text);background:var(--bg4);}
+.snd{width:40px;height:40px;border-radius:11px;background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;font-size:17px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:opacity .2s,transform .1s;}
+.snd:hover{opacity:.85;}.snd:active{transform:scale(.94);}
+
+/* ── AI PANEL ── */
+.aip{width:240px;min-width:240px;background:var(--bg2);border-left:1px solid var(--bd);display:flex;flex-direction:column;height:100vh;}
+.aiph{padding:14px 12px 10px;border-bottom:1px solid var(--bd);}
+.aipt{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;display:flex;align-items:center;gap:7px;margin-bottom:9px;}
+.aidot{width:7px;height:7px;border-radius:50%;background:var(--ac2);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.4)}}
+.aqbs{display:flex;flex-direction:column;gap:4px;}
+.aqb{background:var(--bg3);border:1px solid var(--bd);border-radius:9px;padding:8px 10px;color:var(--t2);font-size:12px;text-align:left;transition:all .2s;display:flex;align-items:center;gap:7px;}
+.aqb:hover{background:var(--bg4);color:var(--text);border-color:var(--ac);}
+.aico{flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:7px;}
+.aim{padding:9px 11px;border-radius:11px;font-size:12px;line-height:1.6;}
+.aim.u{background:rgba(124,111,205,.14);border:1px solid rgba(124,111,205,.2);margin-left:14px;}
+.aim.a{background:var(--bg3);border:1px solid var(--bd);}
+.aiw{font-size:10px;font-weight:500;margin-bottom:3px;}
+.aim.u .aiw{color:var(--ac);}.aim.a .aiw{color:var(--ac3);}
+.aib{color:var(--t2);}
+.aibar{padding:8px 10px;border-top:1px solid var(--bd);display:flex;gap:5px;}
+.aiin{flex:1;background:var(--bg3);border:1px solid var(--bd);border-radius:9px;padding:7px 10px;color:var(--text);font-size:12px;outline:none;font-family:'DM Sans',sans-serif;}
+.aiin:focus{border-color:var(--ac);}
+.aiin::placeholder{color:var(--t3);}
+.aisb{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+
+/* ── CALL ── */
+#cov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:200;align-items:center;justify-content:center;flex-direction:column;gap:18px;}
+.cav{width:76px;height:76px;border-radius:20px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:#fff;}
+.cname{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;}
+.cst{font-size:13px;color:var(--t2);}
+.cbs{display:flex;gap:14px;margin-top:12px;}
+.cbtn{width:54px;height:54px;border-radius:50%;font-size:22px;display:flex;align-items:center;justify-content:center;}
+.cbtn.end{background:var(--red);}.cbtn.m{background:var(--bg3);color:var(--text);}
+
+/* ── MOBILE ── */
+@media(max-width:860px){.aip{display:none;}}
+@media(max-width:580px){
+  .sb{position:fixed;z-index:100;transform:translateX(-100%);box-shadow:4px 0 30px rgba(0,0,0,.5);}
+  .sb.open{transform:translateX(0);}
+  .mmt{display:flex;}
+}
+</style>
+</head>
+<body>
+
+<!-- AUTH -->
+<div id="auth">
+<div class="ac">
+  <div class="alo">
+    <div class="ali">DN</div>
+    <div class="at">DigNets</div>
+    <div class="as2">Real-time AI Messenger</div>
+  </div>
+  <div class="atabs">
+    <button class="atab on" onclick="swT('login')">Kirish</button>
+    <button class="atab" onclick="swT('reg')">Ro'yxat</button>
+  </div>
+  <div class="af">
+    <input id="au" type="text" placeholder="Username" autocomplete="username">
+    <input id="adn" type="text" placeholder="Ism familiya" style="display:none" autocomplete="name">
+    <input id="ap" type="password" placeholder="Parol" autocomplete="current-password">
+  </div>
+  <div class="aerr" id="aerr"></div>
+  <button class="abtn" id="asbtn" onclick="doAuth()">Kirish</button>
+  <div>
+    <div class="dlab" style="margin-bottom:5px">Demo hisoblar</div>
+    <div class="dmo">
+      <button class="dmb" onclick="dl('admin','admin123')">👤 <div><div style="color:var(--text);font-size:13px">admin</div><div>admin123</div></div></button>
+      <button class="dmb" onclick="dl('alice','alice123')">👤 <div><div style="color:var(--text);font-size:13px">alice</div><div>alice123</div></div></button>
+      <button class="dmb" onclick="dl('bob','bob123')">👤 <div><div style="color:var(--text);font-size:13px">bob</div><div>bob123</div></div></button>
+    </div>
+  </div>
+  <div class="srv-note" id="srv-note">Server: <a href="#" onclick="chSrv()">avtomatik</a></div>
+</div>
+</div>
+
+<!-- APP -->
+<div id="app">
+<div class="layout">
+  <div class="sb" id="sb">
+    <div class="sbh">
+      <div class="sbli">DN</div>
+      <div class="sblt">DigNets</div>
+      <button class="sbnew" onclick="document.getElementById('sbsi').focus()">✏️</button>
+    </div>
+    <div class="sbsr">
+      <span style="color:var(--t3);font-size:14px">🔍</span>
+      <input id="sbsi" placeholder="Qidirish..." oninput="filt(this.value)">
+    </div>
+    <div class="sbtabs">
+      <button class="sbtab on" onclick="stab(this,'all')">Hammasi</button>
+      <button class="sbtab" onclick="stab(this,'on')">Onlayn</button>
+    </div>
+    <div class="ul" id="ul"></div>
+    <div class="sbb">
+      <div class="myav" id="myav">?</div>
+      <div><div class="myn" id="myn">...</div><div class="mys">● Onlayn</div></div>
+      <button class="lbtn" onclick="logout()">⬅️</button>
+    </div>
+  </div>
+
+  <div class="mn">
+    <div class="conn-banner" id="cbn"></div>
+    <div class="emp" id="emp">
+      <div class="empbig">DN</div>
+      <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--t2)">DigNets</div>
+      <div style="font-size:13px;text-align:center;max-width:200px;line-height:1.6;color:var(--t3)">Kontakt tanlang va chat boshlang</div>
+    </div>
+    <div id="cv">
+      <div class="ch">
+        <button class="mmt" onclick="tsb()">☰</button>
+        <div class="avw">
+          <div class="av" id="hav" style="width:34px;height:34px;font-size:12px;color:#fff;"></div>
+          <div class="odot" id="hdot" style="display:none"></div>
+        </div>
+        <div>
+          <div class="chn" id="hn"></div>
+          <div class="chs" id="hs"></div>
+        </div>
+        <div class="has">
+          <button class="hb" onclick="scall()">📹</button>
+          <button class="hb" onclick="scall()">📞</button>
+          <button class="hb" onclick="showInfo()">ℹ️</button>
+        </div>
+      </div>
+      <div class="msgs" id="ma"></div>
+      <div class="ibar">
+        <div class="iw">
+          <textarea id="mi" placeholder="Xabar yozing..." rows="1" oninput="ar(this)" onkeydown="hk(event)"></textarea>
+          <div class="iac">
+            <button class="ib" onclick="doa()">📎</button>
+            <button class="ib" onclick="doe()">😊</button>
+          </div>
+        </div>
+        <button class="snd" onclick="send()">➤</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="aip">
+    <div class="aiph">
+      <div class="aipt"><div class="aidot"></div>DigNets AI</div>
+      <div class="aqbs">
+        <button class="aqb" onclick="aq('Suhbatni qisqa xulosa qilib ber')">🧠 Xulosa</button>
+        <button class="aqb" onclick="aq('Oxirgi xabarga yaxshi javob taklif qil')">✍️ Javob taklif</button>
+        <button class="aqb" onclick="aq('Suhbatdagi sezgini tahlil qil')">🎯 Tahlil</button>
+        <button class="aqb" onclick="aq('Bu xabarni ingliz tiliga tarjima qil')">🌐 Tarjima</button>
+        <button class="aqb" onclick="aq('Bugung vazifalar ro\'yxati')">📋 Vazifalar</button>
+      </div>
+    </div>
+    <div class="aico" id="aic">
+      <div class="aim a"><div class="aiw">🤖 DigNets AI</div><div class="aib">Salom! Yordam beraman 😊</div></div>
+    </div>
+    <div class="aibar">
+      <input class="aiin" id="ain" placeholder="Savolingiz..." onkeydown="handleAiKey(event)">
+      <button class="aisb" onclick="sendAI()">➤</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- CALL -->
+<div id="cov">
+  <div class="cav" id="cav2"></div>
+  <div class="cname" id="cname2"></div>
+  <div class="cst" id="cst2">Ulanmoqda...</div>
+  <div class="cbs">
+    <button class="cbtn m">🔇</button>
+    <button class="cbtn end" onclick="ecall()">📵</button>
+    <button class="cbtn m">🎥</button>
+  </div>
+</div>
+
+<script>
+// ── CONFIG ──
+const AUTO = location.host || 'localhost:3000';
+let SERVER = localStorage.getItem('dn_srv') || AUTO;
+const API = () => `/api`; // same-origin, Railway da ham ishlaydi
+const WS_URL = () => (location.protocol==='https:'?'wss':'ws')+'://'+location.host;
+
+// ── STATE ──
+let token=localStorage.getItem('dn_tok'), me=JSON.parse(localStorage.getItem('dn_me')||'null');
+let ws=null, users=[], onlineSet=new Set(), cp=null, mh={}, aih=[], ctab='all', typEl=null;
+
+// ── AUTH ──
+let am='login';
+function swT(m){am=m;document.querySelectorAll('.atab').forEach((t,i)=>t.classList.toggle('on',i===(m==='login'?0:1)));document.getElementById('adn').style.display=m==='reg'?'':'none';document.getElementById('asbtn').textContent=m==='login'?'Kirish':"Ro'yxatdan o'tish";}
+function dl(u,p){document.getElementById('au').value=u;document.getElementById('ap').value=p;am='login';doAuth();}
+function chSrv(){const s=prompt('Server manzili:',SERVER);if(s){SERVER=s;localStorage.setItem('dn_srv',s);}}
+
+async function doAuth(){
+  const u=document.getElementById('au').value.trim();
+  const p=document.getElementById('ap').value;
+  const dn=document.getElementById('adn').value.trim();
+  if(!u||!p)return serr('Username va parol kiriting');
+  if(am==='reg'&&!dn)return serr('Ism familiya kiriting');
+  const ep=am==='login'?'/api/login':'/api/register';
+  const body=am==='login'?{username:u,password:p}:{username:u,password:p,displayName:dn};
+  try{
+    const r=await fetch(ep,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    const d=await r.json();
+    if(!r.ok)return serr(d.error||'Xato');
+    token=d.token;me=d.user;
+    localStorage.setItem('dn_tok',token);localStorage.setItem('dn_me',JSON.stringify(me));
+    launch();
+  }catch(e){serr('Server bilan ulanib bo\'lmadi! Server ishlaydimi?');}
+}
+function serr(m){const e=document.getElementById('aerr');e.textContent=m;e.style.display='block';setTimeout(()=>e.style.display='none',4000);}
+
+// ── LAUNCH ──
+function launch(){
+  document.getElementById('auth').style.display='none';
+  document.getElementById('app').style.display='block';
+  document.getElementById('myav').textContent=me.avatar;
+  document.getElementById('myav').style.background=me.color||'var(--ac)';
+  document.getElementById('myn').textContent=me.displayName;
+  loadUsers();connectWS();
+}
+
+async function loadUsers(){
+  try{
+    const r=await fetch('/api/users',{headers:{Authorization:'Bearer '+token}});
+    users=await r.json();rend();
+  }catch(e){}
+}
+
+// ── WEBSOCKET ──
+function connectWS(){
+  setBanner('Ulanmoqda...','');
+  ws=new WebSocket(WS_URL());
+  ws.onopen=()=>{ws.send(JSON.stringify({type:'auth',token}));};
+  ws.onmessage=e=>{
+    const d=JSON.parse(e.data);
+    if(d.type==='auth_ok'){setBanner('Ulandi ✓','ok');setTimeout(()=>document.getElementById('cbn').style.display='none',2000);}
+    if(d.type==='online_users'){onlineSet=new Set(d.users.map(u=>u.id));rend();uch();}
+    if(d.type==='user_online'){onlineSet.add(d.userId);rend();uch();}
+    if(d.type==='user_offline'){onlineSet.delete(d.userId);rend();uch();}
+    if(d.type==='new_message'){
+      const msg=d.message;
+      if(!mh[msg.fromId])mh[msg.fromId]=[];
+      mh[msg.fromId].push(msg);
+      if(cp&&cp.id===msg.fromId){
+        apMsg(msg,document.getElementById('ma'));sb2();
+        ws.send(JSON.stringify({type:'read',fromId:msg.fromId}));msg.read=true;
+      } else {
+        // Unread badge
+        const u=users.find(x=>x.id===msg.fromId);if(u){if(!u._unread)u._unread=0;u._unread++;}
+      }
+      rend();
+    }
+    if(d.type==='message_sent'){
+      const msg=d.message;
+      if(!mh[msg.toId])mh[msg.toId]=[];
+      if(!mh[msg.toId].find(m=>m.id===msg.id)){mh[msg.toId].push(msg);rend();}
+    }
+    if(d.type==='typing'){if(cp&&cp.id===d.fromId)showTyp(d.isTyping);}
+    if(d.type==='read_receipt'){if(cp&&cp.id===d.chatWith)document.querySelectorAll('.tks').forEach(el=>el.textContent='✓✓');}
+    if(d.type==='ai_reply'){
+      const pd=document.getElementById('aipd');
+      if(pd){pd.querySelector('.aib').textContent=d.text;pd.removeAttribute('id');}
+      else addAI('a','🤖 DigNets AI',d.text);
+      aih.push({role:'assistant',content:d.text});
+      document.getElementById('aic').scrollTop=9999;
+    }
+  };
+  ws.onclose=()=>{setBanner('Ulanish uzildi. Qayta ulanmoqda...','');setTimeout(connectWS,2500);};
+}
+
+function setBanner(txt,cls){
+  const b=document.getElementById('cbn');
+  b.textContent=txt;b.className='conn-banner'+(cls?' '+cls:'');b.style.display='block';
+}
+
+// ── USER LIST ──
+function rend(f=''){
+  const list=document.getElementById('ul');list.innerHTML='';
+  let fil=users.filter(u=>{
+    const nm=u.displayName.toLowerCase().includes(f.toLowerCase())||u.username.toLowerCase().includes(f.toLowerCase());
+    return nm&&(ctab==='all'||onlineSet.has(u.id));
+  });
+  const on=fil.filter(u=>onlineSet.has(u.id));
+  const off=fil.filter(u=>!onlineSet.has(u.id));
+  if(on.length){aSL('Onlayn',list);on.forEach(u=>aCI(u,list));}
+  if(off.length&&ctab==='all'){aSL('Oflayn',list);off.forEach(u=>aCI(u,list));}
+  if(!on.length&&!off.length)list.innerHTML='<div style="padding:20px;text-align:center;font-size:13px;color:var(--t3)">Topilmadi</div>';
+}
+function aSL(t,l){const d=document.createElement('div');d.className='slb';d.textContent=t;l.appendChild(d);}
+function aCI(u,l){
+  const msgs=mh[u.id]||[];const last=msgs[msgs.length-1];
+  const unread=u._unread||0;
+  const div=document.createElement('div');
+  div.className='ci'+(cp&&cp.id===u.id?' on':'');div.id='ci'+u.id;
+  div.innerHTML=`<div class="avw"><div class="av" style="width:40px;height:40px;font-size:13px;background:${u.color||'#444'};color:#fff">${u.avatar}</div>${onlineSet.has(u.id)?'<div class="odot"></div>':''}</div><div class="cin"><div class="cinm">${u.displayName}</div><div class="cipv">${last?last.text:'@'+u.username}</div></div><div class="cim"><div class="cit">${last?ft(last.time):''}</div>${unread?`<div class="ubdg">${unread}</div>`:''}</div>`;
+  div.onclick=()=>oc(u);l.appendChild(div);
+}
+function filt(v){rend(v);}
+function stab(el,t){document.querySelectorAll('.sbtab').forEach(b=>b.classList.remove('on'));el.classList.add('on');ctab=t;rend();}
+
+// ── OPEN CHAT ──
+async function oc(u){
+  cp=u;u._unread=0;
+  if(window.innerWidth<=580)document.getElementById('sb').classList.remove('open');
+  document.querySelectorAll('.ci').forEach(e=>e.classList.remove('on'));
+  const ci=document.getElementById('ci'+u.id);if(ci)ci.classList.add('on');
+  document.getElementById('emp').style.display='none';
+  const cv=document.getElementById('cv');cv.style.display='flex';cv.style.flexDirection='column';cv.style.height='100%';
+  uch();
+  if(!mh[u.id]){
+    try{const r=await fetch('/api/messages/'+u.id,{headers:{Authorization:'Bearer '+token}});mh[u.id]=await r.json();}
+    catch(e){mh[u.id]=[];}
+  }
+  rmsg();setTimeout(sb2,50);
+  const unr=(mh[u.id]||[]).filter(m=>m.fromId===u.id&&!m.read);
+  if(unr.length){ws.send(JSON.stringify({type:'read',fromId:u.id}));unr.forEach(m=>m.read=true);}
+  rend();
+}
+
+function uch(){
+  if(!cp)return;
+  const u=cp;const on=onlineSet.has(u.id);
+  const hav=document.getElementById('hav');hav.style.background=u.color||'#444';hav.textContent=u.avatar;
+  document.getElementById('hn').textContent=u.displayName;
+  document.getElementById('hs').textContent=on?'● Onlayn':'● Oflayn';
+  document.getElementById('hs').style.color=on?'var(--green)':'var(--t3)';
+  document.getElementById('hdot').style.display=on?'block':'none';
+}
+
+// ── MESSAGES ──
+function rmsg(){
+  const a=document.getElementById('ma');a.innerHTML='';
+  const d=document.createElement('div');d.className='ddiv';d.textContent='Bugun';a.appendChild(d);
+  (mh[cp.id]||[]).forEach(m=>apMsg(m,a));
+}
+function apMsg(m,area){
+  const isMine=m.fromId===me.id;
+  const row=document.createElement('div');row.className='mr '+(isMine?'me':'theirs');
+  if(!isMine){const ma=document.createElement('div');ma.className='mav';ma.style.background=cp.color||'#444';ma.style.color='#fff';ma.textContent=cp.avatar;row.appendChild(ma);}
+  const w=document.createElement('div');w.className='mw';
+  const b=document.createElement('div');b.className='mb';b.textContent=m.text;w.appendChild(b);
+  if(m.reactions&&m.reactions.length){const rs=document.createElement('div');rs.className='rcts';m.reactions.forEach(r=>{const rb=document.createElement('div');rb.className='rct';rb.textContent=r;rs.appendChild(rb);});w.appendChild(rs);}
+  const mt=document.createElement('div');mt.className='mm';mt.innerHTML=ft(m.time)+(isMine?` <span class="tks">${m.read?'✓✓':'✓'}</span>`:'');w.appendChild(mt);
+  row.appendChild(w);area.appendChild(row);
+}
+
+function showTyp(show){
+  const a=document.getElementById('ma');
+  if(show){
+    if(!typEl){
+      typEl=document.createElement('div');typEl.className='typing-r';
+      const ma=document.createElement('div');ma.className='mav';ma.style.background=cp.color||'#444';ma.style.color='#fff';ma.textContent=cp.avatar;
+      const b=document.createElement('div');b.className='tbub';b.innerHTML='<div class="td"></div><div class="td"></div><div class="td"></div>';
+      const l=document.createElement('div');l.className='tlb';l.textContent=cp.displayName.split(' ')[0]+'...';
+      typEl.appendChild(ma);typEl.appendChild(b);typEl.appendChild(l);a.appendChild(typEl);sb2();
+    }
+  }else{if(typEl){typEl.remove();typEl=null;}}
+}
+
+function sb2(){const a=document.getElementById('ma');a.scrollTop=a.scrollHeight;}
+
+// ── SEND ──
+let typT=null;
+function send(){
+  const inp=document.getElementById('mi');const txt=inp.value.trim();
+  if(!txt||!cp||!ws)return;
+  ws.send(JSON.stringify({type:'message',toId:cp.id,text:txt}));
+  inp.value='';inp.style.height='auto';
+  ws.send(JSON.stringify({type:'typing',toId:cp.id,isTyping:false}));
+}
+function hk(e){
+  if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();return;}
+  if(ws&&cp){ws.send(JSON.stringify({type:'typing',toId:cp.id,isTyping:true}));clearTimeout(typT);typT=setTimeout(()=>ws&&ws.send(JSON.stringify({type:'typing',toId:cp.id,isTyping:false})),2000);}
+}
+function ar(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,100)+'px';}
+function doa(){if(!cp)return;const t=['📄 hujjat.pdf','🖼️ rasm.jpg','🎵 audio.mp3','📊 jadval.xlsx'];document.getElementById('mi').value=t[~~(Math.random()*t.length)];send();}
+function doe(){if(!cp)return;const em=['😊','🔥','👍','❤️','🎉','😂','✨','🙌'];document.getElementById('mi').value=em[~~(Math.random()*em.length)];send();}
+
+// ── AI ──
+async function sendAI(){
+  const inp=document.getElementById('ain');const txt=inp.value.trim();if(!txt)return;
+  inp.value='';addAI('u','Siz',txt);aih.push({role:'user',content:txt});
+  const pd=addAI('a','🤖 DigNets AI','...');pd.id='aipd';
+  if(ws&&ws.readyState===1){ws.send(JSON.stringify({type:'ai_message',messages:aih.slice(-8)}));}
+  else{pd.querySelector('.aib').textContent='Server bilan ulanish yo\'q.';pd.removeAttribute('id');}
+}
+function addAI(r,w,t){const c=document.getElementById('aic');const d=document.createElement('div');d.className='aim '+r;d.innerHTML=`<div class="aiw">${w}</div><div class="aib">${t}</div>`;c.appendChild(d);c.scrollTop=9999;return d;}
+function aq(q){
+  const ctx=cp?`Suhbat (${cp.displayName} bilan):\n${(mh[cp.id]||[]).slice(-5).map(m=>(m.fromId===me.id?'Men':'U')+': '+m.text).join('\n')}\n\n`:'';
+  document.getElementById('ain').value=ctx+q;sendAI();document.getElementById('ain').value='';
+}
+function handleAiKey(e){if(e.key==='Enter')sendAI();}
+
+// ── MISC ──
+function scall(){
+  if(!cp)return;
+  const o=document.getElementById('cov');
+  const ca=document.getElementById('cav2');ca.style.background=cp.color;ca.textContent=cp.avatar;
+  document.getElementById('cname2').textContent=cp.displayName;
+  document.getElementById('cst2').textContent='Ulanmoqda...';
+  o.style.display='flex';setTimeout(()=>{document.getElementById('cst2').textContent='Ulandi ✓';},2000);
+}
+function ecall(){document.getElementById('cov').style.display='none';}
+function showInfo(){if(cp)alert(`👤 ${cp.displayName}\n@${cp.username}\n${onlineSet.has(cp.id)?'✅ Onlayn':'❌ Oflayn'}`);}
+function tsb(){document.getElementById('sb').classList.toggle('open');}
+function logout(){
+  localStorage.removeItem('dn_tok');localStorage.removeItem('dn_me');
+  if(ws)ws.close();
+  document.getElementById('app').style.display='none';
+  document.getElementById('auth').style.display='flex';
+  token=null;me=null;users=[];cp=null;mh={};
+}
+function ft(iso){if(!iso)return '';if(!iso.includes('T'))return iso;const d=new Date(iso);return d.getHours()+':'+String(d.getMinutes()).padStart(2,'0');}
+
+// Auto-login
+if(token&&me){document.getElementById('auth').style.display='none';launch();}
+</script>
+</body>
+</html>

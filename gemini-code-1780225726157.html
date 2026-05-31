@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DigNets — Premium AI Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { backgroundColor: #070709; color: #FFFFFF; overflow: hidden; height: 100vh; }
+        
+        /* AUTH EKRANI: INSTAGRAM / TELEGRAM PREMIUM STYLE */
+        #auth-container { display: flex; justify-content: center; align-items: center; height: 100vh; background: radial-gradient(circle at center, #1e1233 0%, #070709 100%); }
+        .auth-card { background: rgba(19, 19, 26, 0.7); backdrop-filter: blur(20px); border: 1px solid rgba(139, 92, 246, 0.2); padding: 40px; width: 380px; borderRadius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); text-align: center; }
+        .auth-logo { font-size: 32px; font-weight: 800; color: #38BDF8; margin-bottom: 5px; letter-spacing: -1px; }
+        .auth-logo span { color: #8B5CF6; }
+        .auth-subtitle { color: #64748B; font-size: 14px; margin-bottom: 25px; }
+        .auth-input { width: 100%; padding: 14px; background: #0F0F14; border: 1px solid #22222E; borderRadius: 10px; color: #FFF; font-size: 15px; margin-bottom: 15px; outline: none; transition: 0.3s; }
+        .auth-input:focus { border-color: #8B5CF6; box-shadow: 0 0 10px rgba(139, 92, 246, 0.3); }
+        .auth-btn { width: 100%; padding: 14px; background: #8B5CF6; border: none; borderRadius: 10px; color: #FFF; font-size: 16px; font-weight: 700; cursor: pointer; transition: 0.3s; }
+        .auth-btn:hover { background: #7C3AED; transform: translateY(-1px); }
+        .switch-text { font-size: 13px; color: #94A3B8; margin-top: 20px; }
+        .switch-link { color: #8B5CF6; cursor: pointer; font-weight: 600; text-decoration: underline; }
+        .error-msg { background: rgba(239, 68, 68, 0.15); border: 1px solid #EF4444; padding: 10px; borderRadius: 8px; color: #FCA5A5; font-size: 13px; margin-bottom: 15px; display: none; }
+
+        /* ASOSIY DASHBOARD INTERFEYSI (RASMDAGI KO'RINISH) */
+        #app-container { display: none; height: 100vh; }
+        
+        /* 1. CHAP PANEL */
+        .sidebar { width: 280px; background: #0F0F14; border-right: 1px solid #1C1C24; display: flex; flex-direction: column; padding: 20px; }
+        .app-logo-row { display: flex; alignItems: center; gap: 10px; margin-bottom: 25px; }
+        .logo-badge { width: 36px; height: 36px; background: #7C3AED; borderRadius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; color: #FFF; }
+        .brand-text { font-size: 20px; font-weight: 800; color: #38BDF8; }
+        .search-input { width: 100%; padding: 10px 15px; background: #181824; border: 1px solid #222232; borderRadius: 8px; color: #FFF; margin-bottom: 20px; outline: none; }
+        .tab-row { display: flex; gap: 20px; border-bottom: 1px solid #1C1C24; padding-bottom: 10px; margin-bottom: 15px; font-size: 14px; }
+        .tab-active { color: #8B5CF6; font-weight: 600; cursor: pointer; border-bottom: 2px solid #8B5CF6; padding-bottom: 10px; margin-bottom: -12px; }
+        .tab-passive { color: #475569; cursor: pointer; }
+        .user-list { flex: 1; overflow-y: auto; }
+        .user-item { display: flex; align-items: center; gap: 12px; padding: 12px; borderRadius: 10px; cursor: pointer; margin-bottom: 5px; transition: 0.2s; }
+        .user-item:hover, .user-item.active { background: #1C1C24; }
+        .avatar { width: 40px; height: 40px; borderRadius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #FFF; font-size: 14px; }
+        .u-info .u-name { font-size: 14px; font-weight: 600; }
+        .u-info .u-status { font-size: 12px; color: #64748B; margin-top: 2px; }
+        .profile-footer { display: flex; align-items: center; gap: 12px; padding-top: 15px; border-top: 1px solid #1C1C24; }
+
+        /* 2. O'RTA PANEL (CHAT) */
+        .chat-area { flex: 1; background: #0B0B0F; display: flex; flex-direction: column; }
+        .chat-header { padding: 18px 25px; border-bottom: 1px solid #1C1C24; display: flex; align-items: center; gap: 12px; }
+        .chat-body { flex: 1; padding: 25px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
+        .msg-bubble { max-width: 60%; padding: 12px 18px; borderRadius: 16px; font-size: 15px; line-height: 1.5; align-self: flex-end; background: #1E1E2A; border: 1px solid #2D2D3F; border-bottom-right-radius: 0; }
+        .chat-footer { padding: 20px; border-top: 1px solid #1C1C24; display: flex; gap: 12px; background: #0B0B0F; }
+        .chat-input { flex: 1; padding: 14px; background: #13131A; border: 1px solid #22222E; borderRadius: 10px; color: #FFF; outline: none; font-size: 15px; }
+        .send-btn { width: 50px; background: #7C3AED; border: none; borderRadius: 10px; color: #FFF; cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        .send-btn:hover { background: #6D28D9; }
+
+        /* 3. O'NG PANEL (DIGNETS AI) */
+        .ai-panel { width: 320px; background: #0F0F14; border-left: 1px solid #1C1C24; display: flex; flex-direction: column; padding: 20px; }
+        .ai-header { font-size: 15px; font-weight: 700; color: #A78BFA; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+        .ai-btn-grid { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+        .ai-cmd-btn { width: 100%; padding: 12px 15px; background: #181824; border: 1px solid #222232; borderRadius: 10px; color: #D1D5DB; text-align: left; font-size: 14px; font-weight: 500; cursor: pointer; transition: 0.2s; }
+        .ai-cmd-btn:hover { border-color: #7C3AED; background: #1E1B4B; }
+        .ai-feed { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding-right: 5px; }
+        .ai-box { padding: 12px; borderRadius: 10px; font-size: 13px; line-height: 1.4; }
+        .ai-box.user { background: #181824; align-self: flex-end; width: 90%; border-left: 3px solid #64748B; }
+        .ai-box.bot { background: rgba(124, 58, 237, 0.1); border: 1px solid rgba(124, 58, 237, 0.25); align-self: flex-start; width: 90%; color: #E9D5FF; border-left: 3px solid #8B5CF6; }
+        .ai-footer { padding-top: 15px; border-top: 1px solid #1C1C24; }
+        .ai-mini-input { width: 100%; padding: 10px; background: #181824; border: none; borderRadius: 8px; color: #475569; font-size: 13px; }
+    </style>
+</head>
+<body>
+
+    <!-- AUTH SECTION -->
+    <div id="auth-container">
+        <div class="auth-card">
+            <div class="auth-logo">DN <span>DigNets</span></div>
+            <div class="auth-subtitle" id="auth-sub">Tizimga kirish paneli</div>
+            <div class="error-msg" id="error-box"></div>
+            
+            <input type="text" id="username" class="auth-input" placeholder="Username">
+            <input type="password" id="password" class="auth-input" placeholder="Parol">
+            
+            <button id="auth-main-btn" class="auth-btn" onclick="handleAuth()">Kirish</button>
+            <div class="switch-text" id="switch-prompt">
+                Akkauntingiz yo'qmi? <span class="switch-link" onclick="toggleAuthMode(true)">Ro'yxatdan o'ting</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN APP WORKSPACE (IMAGE_30B315.PNG MODELI) -->
+    <div id="app-container">
+        <!-- 1. LEFT SIDEBAR -->
+        <div class="sidebar">
+            <div class="app-logo-row">
+                <div class="logo-badge">DN</div>
+                <div class="brand-text">DigNets</div>
+            </div>
+            <input type="text" class="search-input" placeholder="🔍 @mmm">
+            <div class="tab-row">
+                <span class="tab-active">Hammasi</span>
+                <span class="tab-passive">Onlayn</span>
+            </div>
+            <div class="user-list">
+                <div class="user-item active">
+                    <div class="avatar" style="background: #7C3AED;">AD</div>
+                    <div class="u-info"><div class="u-name">Admin</div><div class="u-status">@admin</div></div>
+                </div>
+                <div class="user-item">
+                    <div class="avatar" style="background: #06B6D4;">AL</div>
+                    <div class="u-info"><div class="u-name">Alice</div><div class="u-status">@alice</div></div>
+                </div>
+                <div class="user-item">
+                    <div class="avatar" style="background: #10B981;">BO</div>
+                    <div class="u-info"><div class="u-name">Bob</div><div class="u-status">@bob</div></div>
+                </div>
+            </div>
+            <div class="profile-footer">
+                <div class="avatar" style="background: #EC4899;">MA</div>
+                <div class="u-info">
+                    <div class="u-name" id="current-user-display">Madinabonu</div>
+                    <div style="font-size: 12px; color: #10B981;">● Onlayn</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. CHAT PANEL -->
+        <div class="chat-area">
+            <div class="chat-header">
+                <div class="avatar" style="background: #7C3AED;">AD</div>
+                <div class="u-info"><div class="u-name" style="font-weight:700;">Admin</div><div style="font-size:12px; color:#64748B;">● Oflayn</div></div>
+            </div>
+            <div class="chat-body" id="chat-messages">
+                <div style="text-align: center; color: #334155; font-size: 12px; margin: 10px 0;">Bugun</div>
+                <div class="msg-bubble">salom</div>
+            </div>
+            <div class="chat-footer">
+                <input type="text" id="chat-input" class="chat-input" placeholder="Xabar yozing..." onkeydown="if(event.key === 'Enter') sendMsg()">
+                <button class="send-btn" onclick="sendMsg()">➔</button>
+            </div>
+        </div>
+
+        <!-- 3. RIGHT AI CO-PILOT PANEL -->
+        <div class="ai-panel">
+            <div class="ai-header">🔮 DigNets AI Panel</div>
+            <div class="ai-btn-grid">
+                <button class="ai-cmd-btn" onclick="runAi('xulosa')">📝 Xulosa</button>
+                <button class="ai-cmd-btn" onclick="runAi('javob')">🔥 Javob taklif qilish</button>
+                <button class="ai-cmd-btn" onclick="runAi('tahlil')">📊 Sentimental Tahlil</button>
+                <button class="ai-cmd-btn" onclick="runAi('tarjima')">🌐 Ingliz tiliga tarjima</button>
+            </div>
+            <div class="ai-feed" id="ai-feed-box">
+                <div class="ai-box bot">DigNets AI tayyor. Chapdagi chatga xabar yozing va buyruq tugmasini bosing! ⚡</div>
+            </div>
+            <div class="ai-footer">
+                <input type="text" class="ai-mini-input" placeholder="Savolingiz..." disabled>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let isRegisterMode = false;
+        const API_URL = window.location.origin; // Avtomat o'zi joylashgan Render hostini oladi
+
+        function toggleAuthMode(mode) {
+            isRegisterMode = mode;
+            const sub = document.getElementById('auth-sub');
+            const btn = document.getElementById('auth-main-btn');
+            const prompt = document.getElementById('switch-prompt');
+            const errBox = document.getElementById('error-box');
+            errBox.style.display = 'none';
+
+            if(isRegisterMode) {
+                sub.innerText = "Yangi akkaunt yaratish";
+                btn.innerText = "Ro'yxatdan o'tish";
+                prompt.innerHTML = `Akkauntingiz bormi? <span class="switch-link" onclick="toggleAuthMode(false)">Kirish qismi</span>`;
+            } else {
+                sub.innerText = "Tizimga kirish paneli";
+                btn.innerText = "Kirish";
+                prompt.innerHTML = `Akkauntingiz yo'qmi? <span class="switch-link" onclick="toggleAuthMode(true)">Ro'yxatdan o'ting</span>`;
+            }
+        }
+
+        async function handleAuth() {
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+            const errBox = document.getElementById('error-box');
+            errBox.style.display = 'none';
+
+            if(!user || !pass) {
+                errBox.innerText = "Barcha maydonlarni to'ldiring!";
+                errBox.style.display = 'block';
+                return;
+            }
+
+            const path = isRegisterMode ? '/api/auth/register' : '/api/auth/login';
+            try {
+                const res = await fetch(API_URL + path, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ username: user, password: pass })
+                });
+                const data = await res.json();
+
+                if(res.ok) {
+                    if(isRegisterMode) {
+                        toggleAuthMode(false);
+                        alert("Ro'yxatdan o'tdingiz, endi tizimga kiring!");
+                    } else {
+                        document.getElementById('current-user-display').innerText = data.username;
+                        document.getElementById('auth-container').style.display = 'none';
+                        document.getElementById('app-container').style.display = 'flex';
+                    }
+                } else {
+                    errBox.innerText = data.error || "Xatolik yuz berdi";
+                    errBox.style.display = 'block';
+                }
+            } catch(e) {
+                errBox.innerText = "Server bilan aloqa uzildi!";
+                errBox.style.display = 'block';
+            }
+        }
+
+        let totalMessages = ["salom"];
+
+        function sendMsg() {
+            const input = document.getElementById('chat-input');
+            if(!input.value.trim()) return;
+            
+            const chatBody = document.getElementById('chat-messages');
+            const newMsg = document.createElement('div');
+            newMsg.className = 'msg-bubble';
+            newMsg.innerText = input.value;
+            chatBody.appendChild(newMsg);
+            
+            totalMessages.push(input.value);
+            input.value = "";
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
+
+        async function runAi(cmd) {
+            const lastText = totalMessages[totalMessages.length - 1] || "";
+            const aiBox = document.getElementById('ai-feed-box');
+            
+            // Foydalanuvchi buyrug'ini ko'rsatish
+            const userFeed = document.createElement('div');
+            userFeed.className = 'ai-box user';
+            userFeed.innerText = `Buyruq yuborildi: [${cmd}]`;
+            aiBox.appendChild(userFeed);
+
+            try {
+                const res = await fetch(API_URL + '/api/ai/command', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ command: cmd, text: lastText })
+                });
+                const data = await res.json();
+
+                const botFeed = document.createElement('div');
+                botFeed.className = 'ai-box bot';
+                botFeed.innerText = data.reply;
+                aiBox.appendChild(botFeed);
+            } catch(e) {
+                const errFeed = document.createElement('div');
+                errFeed.className = 'ai-box bot';
+                errFeed.innerText = "AI ulana olmadi, serverni tekshiring.";
+                aiBox.appendChild(errFeed);
+            }
+            aiBox.scrollTop = aiBox.scrollHeight;
+        }
+    </script>
+</body>
+</html>
